@@ -52,7 +52,7 @@ public class BatchProcessorConfig {
         influxBucket = getEnvOrThrow(dotenv, "INFLUX_BUCKET", "InfluxDB bucket name is required.");
 
         // Load Kafka settings
-        kafkaBrokers = getEnv(dotenv, "KAFKA_BROKERS", "localhost:9092");
+        kafkaBrokers = getEnv(dotenv, "KAFKA_BROKERS", "localhost:9093");
         kafkaTopic = getEnv(dotenv, "KAFKA_TOPIC", "sensores_cloud");
         kafkaClientId = getEnv(dotenv, "KAFKA_CLIENT_ID", "batch-processor-kafka-client");
 

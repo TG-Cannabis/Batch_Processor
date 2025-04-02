@@ -49,9 +49,11 @@ public class MqttService implements AutoCloseable {
         mqttClient = new MqttClient(config.getMqttBroker(), config.getMqttClientId(), new MemoryPersistence());
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setCleanSession(true);
-        connOpts.setAutomaticReconnect(true);
+
+        /*connOpts.setAutomaticReconnect(true);
         connOpts.setConnectionTimeout(10); // seconds
         connOpts.setKeepAliveInterval(20); // seconds
+        */
 
         mqttClient.setCallback(new MqttCallbackExtended() {
             @Override
@@ -89,7 +91,12 @@ public class MqttService implements AutoCloseable {
         });
 
         LOGGER.info("Connecting to MQTT broker: {}", config.getMqttBroker());
-        mqttClient.connect(connOpts);
+        try{
+            mqttClient.connect(connOpts);
+        } catch (MqttException e) {
+            LOGGER.error("Error connecting to MQTT broker: {}", e.getMessage(), e);
+            throw e; // Rethrow to handle connection failure
+        }
     }
 
     /**

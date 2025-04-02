@@ -5,6 +5,8 @@ import com.influxdb.client.InfluxDBClientFactory;
 import com.influxdb.client.WriteApi;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
+import com.influxdb.client.write.events.WriteErrorEvent;
+import com.influxdb.client.write.events.WriteSuccessEvent;
 import com.influxdb.exceptions.InfluxException;
 import com.tgcannabis.batchprocessor.config.BatchProcessorConfig;
 import com.tgcannabis.batchprocessor.model.SensorData; // Assuming model location

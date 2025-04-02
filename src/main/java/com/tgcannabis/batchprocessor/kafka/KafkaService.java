@@ -45,6 +45,13 @@ public class KafkaService implements AutoCloseable {
         // props.put(ProducerConfig.ACKS_CONFIG, "all"); // Higher durability
         // props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, 30000); // Max time for delivery
 
+        // --- NUEVOS PARÁMETROS PARA RECONEXIÓN ---
+        // Espera base antes de reintentar la conexión (60000 ms = 1 minuto)
+        props.put(ProducerConfig.RECONNECT_BACKOFF_MS_CONFIG, "60000");
+        // Espera máxima antes de reintentar la conexión (60000 ms = 1 minuto)
+        props.put(ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, "600000");
+        // --- FIN NUEVOS PARÁMETROS ---
+
         try {
             LOGGER.info("Initializing Kafka Producer for brokers: {}", config.getKafkaBrokers());
             this.producer = new KafkaProducer<>(props);
