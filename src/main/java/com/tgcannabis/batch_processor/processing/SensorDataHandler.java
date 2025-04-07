@@ -1,11 +1,11 @@
-package com.tgcannabis.batchprocessor.processing;
+package com.tgcannabis.batch_processor.processing;
 
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.tgcannabis.batchprocessor.influx.InfluxDbService;
-import com.tgcannabis.batchprocessor.kafka.KafkaService;
-import com.tgcannabis.batchprocessor.model.SensorData; // Assuming model location
+import com.tgcannabis.batch_processor.influx.InfluxDbService;
+import com.tgcannabis.batch_processor.kafka.KafkaService;
+import com.tgcannabis.batch_processor.model.SensorData; // Assuming model location
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,7 +1,7 @@
-package com.tgcannabis.batchprocessor.kafka;
+package com.tgcannabis.batch_processor.kafka;
 
 
-import com.tgcannabis.batchprocessor.config.BatchProcessorConfig;
+import com.tgcannabis.batch_processor.config.BatchProcessorConfig;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Handles publishing messages to the configured Apache Kafka topic.

@@ -1,15 +1,15 @@
-package com.tgcannabis.batchprocessor.config;
+package com.tgcannabis.batch_processor.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
 
 /**
  * Loads and holds configuration parameters for the Batch Processor application.
  * Reads configuration from environment variables or a .env file.
  */
+@Getter
 public class BatchProcessorConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BatchProcessorConfig.class);
@@ -59,40 +59,23 @@ public class BatchProcessorConfig {
         logConfiguration();
     }
 
-    // --- Getters ---
-
-    public String getMqttBroker() { return mqttBroker; }
-    public String getMqttClientId() { return mqttClientId; }
-    public String getMqttTopicFilter() { return mqttTopicFilter; }
-    public String getInfluxUrl() { return influxUrl; }
-    public String getInfluxToken() { return influxToken; }
-    public String getInfluxOrg() { return influxOrg; }
-    public String getInfluxBucket() { return influxBucket; }
-    public String getKafkaBrokers() { return kafkaBrokers; }
-    public String getKafkaTopic() { return kafkaTopic; }
-    public String getKafkaClientId() { return kafkaClientId; }
-
-
-    // --- Helper Methods ---
-
     /**
-     * Gets a value from Dotenv or system environment, returning a default if not found.
+     * Gets a value from System env variables (Or Dotenv file as fallback), returning a default if not found.
      * @param dotenv Dotenv instance
      * @param varName Environment variable name
      * @param defaultValue Default value if not found
      * @return The value found or the default value
      */
     private String getEnv(Dotenv dotenv, String varName, String defaultValue) {
-        String value = dotenv.get(varName);
-        if (value == null || value.trim().isEmpty()) {
-            LOGGER.warn("Environment variable '{}' not found or empty, using default: '{}'", varName, defaultValue);
-            return defaultValue;
-        }
-        return value;
+        String value = System.getenv(varName);
+        if (value != null) return value;
+
+        value = dotenv.get(varName);
+        return value != null ? value : defaultValue;
     }
 
     /**
-     * Gets a value from Dotenv or system environment, throwing an exception if not found.
+     * Gets a value from System env variables (Or Dotenv file as fallback), throwing an exception if not found.
      * @param dotenv Dotenv instance
      * @param varName Environment variable name
      * @param errorMessage Error message if not found
@@ -100,12 +83,13 @@ public class BatchProcessorConfig {
      * @throws IllegalStateException if the variable is missing or empty
      */
     private String getEnvOrThrow(Dotenv dotenv, String varName, String errorMessage) {
-        String value = dotenv.get(varName);
-        if (value == null || value.trim().isEmpty()) {
-            LOGGER.error("Missing required environment variable: '{}'. {}", varName, errorMessage);
-            throw new IllegalStateException("Missing required environment variable: " + varName);
-        }
-        return value;
+        String value = System.getenv(varName);
+        if (value != null) return value;
+
+        value = dotenv.get(varName);
+        if (value != null) return value;
+
+        throw new IllegalArgumentException(errorMessage);
     }
 
     /** Logs the loaded configuration (except sensitive tokens). */

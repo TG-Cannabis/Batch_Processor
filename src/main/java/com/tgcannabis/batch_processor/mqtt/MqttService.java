@@ -1,7 +1,7 @@
-package com.tgcannabis.batchprocessor.mqtt;
+package com.tgcannabis.batch_processor.mqtt;
 
 
-import com.tgcannabis.batchprocessor.config.BatchProcessorConfig;
+import com.tgcannabis.batch_processor.config.BatchProcessorConfig;
 import lombok.Setter;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;

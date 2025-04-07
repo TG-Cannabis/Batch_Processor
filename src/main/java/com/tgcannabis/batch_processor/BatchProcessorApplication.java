@@ -1,11 +1,11 @@
-package com.tgcannabis.batchprocessor.app;
+package com.tgcannabis.batch_processor;
 
 
-import com.tgcannabis.batchprocessor.config.BatchProcessorConfig;
-import com.tgcannabis.batchprocessor.influx.InfluxDbService;
-import com.tgcannabis.batchprocessor.kafka.KafkaService;
-import com.tgcannabis.batchprocessor.mqtt.MqttService;
-import com.tgcannabis.batchprocessor.processing.SensorDataHandler;
+import com.tgcannabis.batch_processor.config.BatchProcessorConfig;
+import com.tgcannabis.batch_processor.influx.InfluxDbService;
+import com.tgcannabis.batch_processor.kafka.KafkaService;
+import com.tgcannabis.batch_processor.mqtt.MqttService;
+import com.tgcannabis.batch_processor.processing.SensorDataHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

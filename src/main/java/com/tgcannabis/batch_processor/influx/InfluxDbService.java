@@ -1,4 +1,4 @@
-package com.tgcannabis.batchprocessor.influx;
+package com.tgcannabis.batch_processor.influx;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
@@ -8,8 +8,8 @@ import com.influxdb.client.write.Point;
 import com.influxdb.client.write.events.WriteErrorEvent;
 import com.influxdb.client.write.events.WriteSuccessEvent;
 import com.influxdb.exceptions.InfluxException;
-import com.tgcannabis.batchprocessor.config.BatchProcessorConfig;
-import com.tgcannabis.batchprocessor.model.SensorData; // Assuming model location
+import com.tgcannabis.batch_processor.config.BatchProcessorConfig;
+import com.tgcannabis.batch_processor.model.SensorData; // Assuming model location
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

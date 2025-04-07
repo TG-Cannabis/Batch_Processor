@@ -1,4 +1,4 @@
-package com.tgcannabis.batchprocessor.model;
+package com.tgcannabis.batch_processor.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
