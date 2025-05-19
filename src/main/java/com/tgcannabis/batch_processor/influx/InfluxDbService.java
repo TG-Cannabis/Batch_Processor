@@ -96,15 +96,13 @@ public class InfluxDbService implements AutoCloseable {
         }
 
         try {
-            Point point = Point.measurement("sensor_data")  // Use consistent measurement
+            Point point = Point.measurement(data.getSensorType()) // Measurement is sensorType
                     .addTag("sensorId", data.getSensorId())
                     .addTag("location", data.getLocation() != null ? data.getLocation() : "unknown")
-                    .addTag("sensorType", data.getSensorType())
                     .addTag("originTopic", originatingTopic != null ? originatingTopic : "unknown")
+                    .addTag("sensorType", data.getSensorType())
                     .addField("value", data.getValue())
-                    .addField("sensorType", data.getSensorType())
-                    .addField("location", data.getLocation() != null ? data.getLocation() : "unknown")
-                    .addField("sensorId", data.getSensorId())
+                    .addField("timestamp", data.getTimestamp())
                     .time(Instant.ofEpochMilli(data.getTimestamp()), WritePrecision.MS);
 
             LOGGER.debug("Queueing point for InfluxDB: {}", point.toLineProtocol());
