@@ -88,7 +88,7 @@ public class InfluxDbService implements AutoCloseable {
         Objects.requireNonNull(data, "SensorData cannot be null");
         if (this.writeApi == null || this.influxDBClient == null) {
             LOGGER.warn("InfluxDB client/write API not initialized. Cannot write data.");
-            return; // Fail fast if not ready
+            return;
         }
         if (data.getSensorId() == null || data.getSensorType() == null) {
             LOGGER.warn("Incomplete SensorData received, skipping InfluxDB write: {}", data);
@@ -96,18 +96,21 @@ public class InfluxDbService implements AutoCloseable {
         }
 
         try {
-            Point point = Point.measurement(data.getSensorType())
+            Point point = Point.measurement("sensor_data")  // Use consistent measurement
                     .addTag("sensorId", data.getSensorId())
                     .addTag("location", data.getLocation() != null ? data.getLocation() : "unknown")
+                    .addTag("sensorType", data.getSensorType())
                     .addTag("originTopic", originatingTopic != null ? originatingTopic : "unknown")
                     .addField("value", data.getValue())
+                    .addField("sensorType", data.getSensorType())
+                    .addField("location", data.getLocation() != null ? data.getLocation() : "unknown")
+                    .addField("sensorId", data.getSensorId())
                     .time(Instant.ofEpochMilli(data.getTimestamp()), WritePrecision.MS);
 
             LOGGER.debug("Queueing point for InfluxDB: {}", point.toLineProtocol());
             writeApi.writePoint(point);
 
         } catch (Exception e) {
-            // Catch potential errors during Point creation, though less likely
             LOGGER.error("Error creating InfluxDB Point object: {}", e.getMessage(), e);
         }
     }
