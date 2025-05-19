@@ -81,7 +81,7 @@ public class InfluxDbService implements AutoCloseable {
      * The data point is added to a buffer and written in the background.
      * Does nothing if the client failed to initialize.
      *
-     * @param data The SensorData object to write. Must not be null.
+     * @param data             The SensorData object to write. Must not be null.
      * @param originatingTopic The MQTT topic the data came from (used as a tag). Can be null.
      */
     public void writeSensorData(SensorData data, String originatingTopic) {
@@ -90,15 +90,15 @@ public class InfluxDbService implements AutoCloseable {
             LOGGER.warn("InfluxDB client/write API not initialized. Cannot write data.");
             return; // Fail fast if not ready
         }
-        if (data.getSensorName() == null || data.getSensorName().getSensorType() == null || data.getSensorName().getId() == null) {
+        if (data.getSensorId() == null || data.getSensorType() == null) {
             LOGGER.warn("Incomplete SensorData received, skipping InfluxDB write: {}", data);
             return;
         }
 
         try {
-            Point point = Point.measurement(data.getSensorName().getSensorType())
-                    .addTag("sensorId", data.getSensorName().getId())
-                    .addTag("location", data.getSensorName().getLocation() != null ? data.getSensorName().getLocation() : "unknown")
+            Point point = Point.measurement(data.getSensorType())
+                    .addTag("sensorId", data.getSensorId())
+                    .addTag("location", data.getLocation() != null ? data.getLocation() : "unknown")
                     .addTag("originTopic", originatingTopic != null ? originatingTopic : "unknown")
                     .addField("value", data.getValue())
                     .time(Instant.ofEpochMilli(data.getTimestamp()), WritePrecision.MS);

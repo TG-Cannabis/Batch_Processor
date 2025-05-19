@@ -1,6 +1,5 @@
 package com.tgcannabis.batch_processor;
 
-
 import com.tgcannabis.batch_processor.config.BatchProcessorConfig;
 import com.tgcannabis.batch_processor.influx.InfluxDbService;
 import com.tgcannabis.batch_processor.kafka.KafkaService;
@@ -77,13 +76,25 @@ public class BatchProcessorApplication {
         LOGGER.info("Shutting down Batch Processor Application...");
         // Close in reverse order of dependency or where it makes sense
         if (mqttService != null) {
-            try { mqttService.close(); } catch (Exception e) { LOGGER.error("Error closing MQTT Service", e); }
+            try {
+                mqttService.close();
+            } catch (Exception e) {
+                LOGGER.error("Error closing MQTT Service", e);
+            }
         }
         if (kafkaService != null) {
-            try { kafkaService.close(); } catch (Exception e) { LOGGER.error("Error closing Kafka Service", e); }
+            try {
+                kafkaService.close();
+            } catch (Exception e) {
+                LOGGER.error("Error closing Kafka Service", e);
+            }
         }
         if (influxDbService != null) {
-            try { influxDbService.close(); } catch (Exception e) { LOGGER.error("Error closing InfluxDB Service", e); }
+            try {
+                influxDbService.close();
+            } catch (Exception e) {
+                LOGGER.error("Error closing InfluxDB Service", e);
+            }
         }
         LOGGER.info("Batch Processor Application shut down complete.");
     }
@@ -91,6 +102,7 @@ public class BatchProcessorApplication {
 
     /**
      * Main method. Creates an instance of the application and starts it.
+     *
      * @param args Command line arguments (not used).
      */
     public static void main(String[] args) {

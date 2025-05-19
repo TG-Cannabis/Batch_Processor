@@ -1,6 +1,5 @@
 package com.tgcannabis.batch_processor.processing;
 
-
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.tgcannabis.batch_processor.influx.InfluxDbService;
@@ -28,7 +27,7 @@ public class SensorDataHandler implements BiConsumer<String, String> {
     /**
      * Constructs the message handler.
      *
-     * @param kafkaService Service for publishing to Kafka. Must not be null.
+     * @param kafkaService    Service for publishing to Kafka. Must not be null.
      * @param influxDbService Service for writing to InfluxDB. Must not be null.
      */
     public SensorDataHandler(KafkaService kafkaService, InfluxDbService influxDbService) {
@@ -40,7 +39,7 @@ public class SensorDataHandler implements BiConsumer<String, String> {
      * Processes an incoming MQTT message payload.
      * This method implements the BiConsumer interface for use with MqttService.
      *
-     * @param topic   The MQTT topic the message arrived on.
+     * @param topic   The MQTT topic the message arrived at.
      * @param payload The raw message payload (expected to be JSON).
      */
     @Override
@@ -51,13 +50,13 @@ public class SensorDataHandler implements BiConsumer<String, String> {
             SensorData sensorData = gson.fromJson(payload, SensorData.class);
 
             // Basic validation
-            if (sensorData == null || sensorData.getSensorName() == null || sensorData.getSensorName().getId() == null) {
+            if (sensorData == null || sensorData.getSensorId() == null) {
                 LOGGER.warn("Skipping message due to incomplete data after deserialization: {}", payload);
                 return;
             }
 
             // Use sensor ID as Kafka key for potential partitioning
-            String kafkaKey = sensorData.getSensorName().getId();
+            String kafkaKey = sensorData.getSensorId();
 
             // 2. Attempt to send raw JSON payload to Kafka
             // KafkaService handles async send and logging internally
