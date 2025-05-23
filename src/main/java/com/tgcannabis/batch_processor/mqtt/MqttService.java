@@ -22,7 +22,7 @@ public class MqttService implements AutoCloseable {
     private MqttClient mqttClient;
     /**
      * -- SETTER --
-     *  Sets the handler to be called when an MQTT message arrives.
+     * Sets the handler to be called when an MQTT message arrives.
      *
      * @param messageHandler A BiConsumer accepting Topic (String) and Payload (String).
      */
@@ -34,8 +34,14 @@ public class MqttService implements AutoCloseable {
      *
      * @param config The application configuration. Must not be null.
      */
-    public MqttService(BatchProcessorConfig config) {
+    public MqttService(BatchProcessorConfig config) throws MqttException {
         this.config = Objects.requireNonNull(config, "Configuration cannot be null");
+        mqttClient = new MqttClient(config.getMqttBroker(), config.getMqttClientId(), new MemoryPersistence());
+    }
+
+    public MqttService(BatchProcessorConfig config, MqttClient mqttClient) {
+        this.config = Objects.requireNonNull(config, "Configuration cannot be null");
+        this.mqttClient = mqttClient;
     }
 
     /**
@@ -45,8 +51,7 @@ public class MqttService implements AutoCloseable {
      */
     public void connect() throws MqttException {
         Objects.requireNonNull(messageHandler, "Message handler must be set before connecting.");
-
-        mqttClient = new MqttClient(config.getMqttBroker(), config.getMqttClientId(), new MemoryPersistence());
+        
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setCleanSession(true);
 
@@ -91,7 +96,7 @@ public class MqttService implements AutoCloseable {
         });
 
         LOGGER.info("Connecting to MQTT broker: {}", config.getMqttBroker());
-        try{
+        try {
             mqttClient.connect(connOpts);
         } catch (MqttException e) {
             LOGGER.error("Error connecting to MQTT broker: {}", e.getMessage(), e);
@@ -138,7 +143,9 @@ public class MqttService implements AutoCloseable {
         }
     }
 
-    /** Closes the underlying client instance, suppressing exceptions. */
+    /**
+     * Closes the underlying client instance, suppressing exceptions.
+     */
     private void closeClientQuietly() {
         try {
             mqttClient.close();
