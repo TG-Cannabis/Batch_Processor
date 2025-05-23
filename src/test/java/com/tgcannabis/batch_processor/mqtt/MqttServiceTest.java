@@ -131,7 +131,7 @@ public class MqttServiceTest {
         verify(handler).accept("test/topic", "test-payload");
     }
 
-    private MqttCallbackExtended captureCallback() throws Exception {
+    private MqttCallbackExtended captureCallback() {
         verify(mockClient).setCallback(any());
         var argCaptor = org.mockito.ArgumentCaptor.forClass(MqttCallback.class);
         verify(mockClient).setCallback(argCaptor.capture());
