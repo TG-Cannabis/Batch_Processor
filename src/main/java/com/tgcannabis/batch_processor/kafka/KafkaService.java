@@ -41,10 +41,17 @@ public class KafkaService implements AutoCloseable {
      */
     private void initializeProducer() {
         Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getKafkaBrokers());
-        props.put(ProducerConfig.CLIENT_ID_CONFIG, config.getKafkaClientId());
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+
+        try {
+            props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getKafkaBrokers());
+            props.put(ProducerConfig.CLIENT_ID_CONFIG, config.getKafkaClientId());
+            props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        } catch (NullPointerException e) {
+            LOGGER.error("Missing configuration values", e);
+            throw e;
+        }
+
         // Optional: Add more production-ready settings like acks, retries, timeouts
         // props.put(ProducerConfig.ACKS_CONFIG, "all"); // Higher durability
         // props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, 30000); // Max time for delivery

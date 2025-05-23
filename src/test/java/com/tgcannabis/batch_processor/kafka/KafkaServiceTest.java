@@ -42,9 +42,9 @@ public class KafkaServiceTest {
         when(badConfig.getKafkaClientId()).thenReturn("test-client");
         when(badConfig.getKafkaTopic()).thenReturn("topic");
 
-        KafkaService service = new KafkaService(badConfig);
-
-        assertThrows(NullPointerException.class, () -> service.sendMessage("key", "value"));
+        assertThrows(NullPointerException.class, () -> {
+            final KafkaService service = new KafkaService(badConfig);
+        });
     }
 
     @Test
