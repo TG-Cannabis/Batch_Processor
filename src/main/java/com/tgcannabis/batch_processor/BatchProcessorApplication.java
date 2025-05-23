@@ -20,6 +20,22 @@ public class BatchProcessorApplication {
     private KafkaService kafkaService;
     private InfluxDbService influxDbService;
 
+    private final BatchProcessorConfig config;
+
+    public BatchProcessorApplication() {
+        this.config = new BatchProcessorConfig();
+    }
+
+    public BatchProcessorApplication(BatchProcessorConfig config,
+                                     KafkaService kafkaService,
+                                     InfluxDbService influxDbService,
+                                     MqttService mqttService) {
+        this.config = config;
+        this.kafkaService = kafkaService;
+        this.influxDbService = influxDbService;
+        this.mqttService = mqttService;
+    }
+
     /**
      * Starts the batch processor application.
      */
@@ -27,22 +43,25 @@ public class BatchProcessorApplication {
         LOGGER.info("Starting IoT Batch Processor Application...");
 
         try {
-            // 1. Load Configuration
-            BatchProcessorConfig config = new BatchProcessorConfig();
+            // 1. Initialize Services
+            if (kafkaService == null) {
+                kafkaService = new KafkaService(config);
+            }
+            if (influxDbService == null) {
+                influxDbService = new InfluxDbService(config);
+            }
+            if (mqttService == null) {
+                mqttService = new MqttService(config);
+            }
 
-            // 2. Initialize Services
-            kafkaService = new KafkaService(config);
-            influxDbService = new InfluxDbService(config);
-            mqttService = new MqttService(config);
-
-            // 3. Create and Wire Handler
+            // 2. Create and Wire Handler
             SensorDataHandler messageHandler = new SensorDataHandler(kafkaService, influxDbService);
             mqttService.setMessageHandler(messageHandler); // Set the handler in MqttService
 
-            // 4. Connect MQTT (which will trigger subscription)
+            // 3. Connect MQTT (which will trigger subscription)
             mqttService.connect(); // Handle potential MqttException
 
-            // 5. Add Shutdown Hook for graceful cleanup
+            // 4. Add Shutdown Hook for graceful cleanup
             addShutdownHook();
 
             LOGGER.info("Batch Processor Application started successfully.");
@@ -54,7 +73,6 @@ public class BatchProcessorApplication {
             LOGGER.error("FATAL: Application failed to start.", e);
             // Ensure cleanup even if startup fails partially
             shutdown();
-            System.exit(1); // Exit with error code
         }
     }
 
