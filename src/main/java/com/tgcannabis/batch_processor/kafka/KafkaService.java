@@ -31,6 +31,11 @@ public class KafkaService implements AutoCloseable {
         initializeProducer();
     }
 
+    public KafkaService(BatchProcessorConfig config, KafkaProducer<String, String> producer) {
+        this.config = Objects.requireNonNull(config, "Configuration cannot be null");
+        this.producer = producer;
+    }
+
     /**
      * Initializes the KafkaProducer instance based on configuration.
      */
