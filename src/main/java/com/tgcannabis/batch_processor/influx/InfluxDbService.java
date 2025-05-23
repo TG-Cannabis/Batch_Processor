@@ -97,17 +97,23 @@ public class InfluxDbService implements AutoCloseable {
      */
     public void writeSensorData(SensorData data, String originatingTopic) {
         Objects.requireNonNull(data, "SensorData cannot be null");
+
+        // Check for uninitialized client
         if (this.writeApi == null || this.influxDBClient == null) {
-            LOGGER.warn("InfluxDB client/write API not initialized. Cannot write data.");
-            return;
+            LOGGER.warn("InfluxDB client/write API not initialized. Attempting to reinitialize...");
+            initializeClient();
+            if (this.writeApi == null || this.influxDBClient == null) {
+                throw new IllegalStateException("InfluxDB client could not be initialized");
+            }
         }
+
         if (data.getSensorId() == null || data.getSensorType() == null) {
             LOGGER.warn("Incomplete SensorData received, skipping InfluxDB write: {}", data);
             return;
         }
 
         try {
-            Point point = Point.measurement(data.getSensorType()) // Measurement is sensorType
+            Point point = Point.measurement(data.getSensorType())
                     .addTag("sensorId", data.getSensorId())
                     .addTag("location", data.getLocation() != null ? data.getLocation() : "unknown")
                     .addTag("originTopic", originatingTopic != null ? originatingTopic : "unknown")
