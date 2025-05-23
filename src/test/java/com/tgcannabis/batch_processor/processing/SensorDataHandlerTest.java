@@ -64,4 +64,14 @@ public class SensorDataHandlerTest {
         verifyNoInteractions(kafkaService);
         verifyNoInteractions(influxDbService);
     }
+
+    @Test
+    void shouldIgnoreEmptyObjects() {
+        String json = gson.toJson(new SensorData());
+
+        handler.accept("sensors/temperature", json);
+
+        verifyNoInteractions(kafkaService);
+        verifyNoInteractions(influxDbService);
+    }
 }
