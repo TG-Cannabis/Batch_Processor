@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class KafkaServiceTest {
+class KafkaServiceTest {
 
     private BatchProcessorConfig config;
     private KafkaProducer<String, String> mockProducer;
@@ -43,7 +43,7 @@ public class KafkaServiceTest {
         when(badConfig.getKafkaTopic()).thenReturn("topic");
 
         assertThrows(NullPointerException.class, () -> {
-            final KafkaService service = new KafkaService(badConfig);
+            new KafkaService(badConfig);
         });
     }
 

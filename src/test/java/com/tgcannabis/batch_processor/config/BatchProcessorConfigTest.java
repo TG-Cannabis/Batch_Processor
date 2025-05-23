@@ -8,7 +8,7 @@ import org.mockito.MockedStatic;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class BatchProcessorConfigTest {
+class BatchProcessorConfigTest {
 
     @Test
     void shouldLoadAllConfigsFromDotenvFallback() {

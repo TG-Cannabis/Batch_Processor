@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class MqttServiceTest {
+class MqttServiceTest {
     private MqttClient mockClient;
     private MqttService mqttService;
 

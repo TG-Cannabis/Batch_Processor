@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.*;
 
-public class BatchProcessorApplicationTest {
+class BatchProcessorApplicationTest {
     private MqttService mockMqttService;
     private KafkaService mockKafkaService;
     private InfluxDbService mockInfluxService;
@@ -32,35 +32,54 @@ public class BatchProcessorApplicationTest {
     @Test
     void shouldStartApplicationAndConnectMqtt() throws Exception {
         Thread appThread = new Thread(() -> {
-            application.start();
+            try {
+                application.start();
+            } catch (Exception e) {
+                System.err.println("Application thread caught an exception during startup: " + e.getMessage());
+            }
         });
 
         appThread.start();
-        Thread.sleep(500);
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            verify(mockMqttService).setMessageHandler(any());
+            verify(mockMqttService).connect();
+        });
 
         application.shutdown();
 
-        appThread.join(2000);
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            verify(mockMqttService).close();
+            verify(mockKafkaService).close();
+            verify(mockInfluxService).close();
+        });
 
-        // Assertions
-        verify(mockMqttService).setMessageHandler(any());
-        verify(mockMqttService).connect();
-        verify(mockMqttService).close();
+        appThread.join(2000);
     }
 
     @Test
     void shouldShutdownServices() throws Exception {
-        Thread appThread = new Thread(() -> application.start());
-
+        Thread appThread = new Thread(() -> {
+            try {
+                application.start();
+            } catch (Exception e) {
+                System.err.println("Application thread caught an unexpected exception during startup: " + e.getMessage());
+            }
+        });
         appThread.start();
-        Thread.sleep(500);
+
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            verify(mockMqttService).connect();
+        });
 
         application.shutdown();
-        appThread.join(1000);
 
-        verify(mockMqttService).close();
-        verify(mockKafkaService).close();
-        verify(mockInfluxService).close();
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            verify(mockMqttService).close();
+            verify(mockKafkaService).close();
+            verify(mockInfluxService).close();
+        });
+
+        appThread.join(1000);
     }
 
     @Test
