@@ -10,6 +10,7 @@ import com.influxdb.client.write.events.WriteSuccessEvent;
 import com.influxdb.exceptions.InfluxException;
 import com.tgcannabis.batch_processor.config.BatchProcessorConfig;
 import com.tgcannabis.batch_processor.model.SensorData; // Assuming model location
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,11 @@ public class InfluxDbService implements AutoCloseable {
     private static final Logger LOGGER = LoggerFactory.getLogger(InfluxDbService.class);
 
     private final BatchProcessorConfig config;
+
+    @Setter
     private InfluxDBClient influxDBClient;
+
+    @Setter
     private WriteApi writeApi; // Non-blocking API
 
     /**
@@ -38,10 +43,16 @@ public class InfluxDbService implements AutoCloseable {
         initializeClient();
     }
 
+    public InfluxDbService(BatchProcessorConfig config, InfluxDBClient client, WriteApi writeApi) {
+        this.config = config;
+        this.influxDBClient = client;
+        this.writeApi = writeApi;
+    }
+
     /**
      * Initializes the InfluxDB client and the non-blocking Write API.
      */
-    private void initializeClient() {
+    protected void initializeClient() {
         try {
             LOGGER.info("Initializing InfluxDB Client for URL: {}", config.getInfluxUrl());
             influxDBClient = InfluxDBClientFactory.create(
